@@ -1,59 +1,59 @@
 import socket
-import select
+import threading
 
-HEADER_LENGTH = 10
-IP = '127.0.0.1'
-PORT = 1234
-#create server_socket
+# Connection Data
+host = '127.0.0.1'
+port = 55555
+
+# Starting Server
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# allow reuse local address
-server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-server.bind((IP, PORT))
+server.bind((host, port))
 server.listen()
-#manage list of client
-socket_list = [server]
-clients = {}
 
-def receive_message(client):
-    # receive message header
-    header = client.recv(HEADER_LENGTH)
-    if not len(header):
-        return False
-    # get the length of the message
-    length = int(header.decode('utf-8').strip())
-    return {'header': header, 'data': client.recv(length)}
+# Lists For Clients and Their Nicknames
+clients = []
+nicknames = []
 
-while True:
-    #read list, write list, and exception list
-    read, _, exceptions = select.select(socket_list,[], socket_list)
-    for element in read:
-        # if it is the server, receive message from clients
-        if element == server:
-            client, client_address = server.accept()
-            user = receive_message(client)
+# Sending Messages To All Connected Clients
+def broadcast(message):
+    for client in clients:
+        client.send(message)
 
-            if user is False:
-                continue
-            #add to the user list
-            socket_list.append(client)
-            # add a client to the client dic
-            clients[client] = user
-            print(f"New user:{user['data'].decode('utf-8')} is connected from {client_address[0]}:{client_address[1]}.")
-        else:
-            message = receive_message(element)
-            if message is False:
-                data= clients[element]['data'].decode('utf-8')
-                print(f'Closed connection from {data}')
-                del clients[element]
-            
-            user = clients[element]
-            print(f"Received message from {user['data'].decode('utf-8')}:{message['data'].decode('utf-8')} ")
-            #share the message to everyone
-            for client in clients:
-                if client != element:
-                    client.send(user['header']+user['data']+message['header']+message['data'])
-    # Handling exceptions
-    for element in exceptions:
-        socket_list.remove(element)
-        del clients[element]
+# Handling Messages From Clients
+def handle(client):
+    while True:
+        try:
+            # Broadcasting Messages
+            message = client.recv(1024)
+            broadcast(message)
+        except:
+            # Removing And Closing Clients
+            index = clients.index(client)
+            clients.remove(client)
+            client.close()
+            nickname = nicknames[index]
+            broadcast('{} left!'.format(nickname).encode('ascii'))
+            nicknames.remove(nickname)
+            break
+# Receiving / Listening Function
+def receive():
+    while True:
+        # Accept Connection
+        client, address = server.accept()
+        print("Connected with {}".format(str(address)))
+
+        # Request And Store Nickname
+        client.send('NICK'.encode('ascii'))
+        nickname = client.recv(1024).decode('ascii')
+        nicknames.append(nickname)
+        clients.append(client)
+
+        # Print And Broadcast Nickname
+        print("Nickname is {}".format(nickname))
+        broadcast("{} joined!".format(nickname).encode('ascii'))
+        client.send('Connected to server!'.encode('ascii'))
+
+        # Start Handling Thread For Client
+        thread = threading.Thread(target=handle, args=(client,))
+        thread.start()
+receive()
