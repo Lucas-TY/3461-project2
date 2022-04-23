@@ -21,7 +21,7 @@ def receive_message(client):
     if not len(header):
         return False
     # get the length of the message
-    length = int(header.decode("utf-8").strip())
+    length = int(header.decode('utf-8').strip())
     return {'header': header, 'data': client.recv(length)}
 
 while True:

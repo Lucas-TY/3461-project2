@@ -17,10 +17,10 @@ username_header = f"{len(username):<{HEADER_LENGTH}}".encode('utf-8')
 client.send(username_header + username)
 
 while True:
-    message = input(f"{user_name} > ")
+    message = input(f"{user_name}>")
     if message:
         message = message.encode('utf-8')
-        message_header = f"{len(message) }:<{HEADER_LENGTH}".encode('utf-8')
+        message_header = f"{len(message):<{HEADER_LENGTH}}".encode('utf-8')
         client.send(message_header + message)
     try:
         # Receive
