@@ -29,7 +29,7 @@ while True:
             if not len(username_header):
                 print("connection closed by the server")
                 sys.exit()
-            username_length = int(username_header.decode('uft-8'))
+            username_length = int(username_header.decode('utf-8'))
             # Receive exactly the length of header amout of data
             username = client.recv(username_length).decode('utf-8')
             # Receive the data header
