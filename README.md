@@ -23,3 +23,7 @@ for part 2, avaliable commands are:
     groupusers; groupId
     groupleave; groupId
     groupmessage; groupId; messageId
+
+Design flaws:
+1. use split(;) to separate arguments from user input to ensure that the subject and body can have space,
+    which limited the format of user input in another way
