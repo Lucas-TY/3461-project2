@@ -23,10 +23,7 @@ if arguments[0] == 'connect':
                 # Receive Message From Server
                 # If 'NICK' Send userName
                 message = client_socket.recv(1024).decode('ascii')
-                if message == 'NICK':
-                    client_socket.send(username.encode('ascii'))
-                else:
-                    print(message)
+                print(message)
             except:
                 # Close Connection When Error
                 print("An error occured!")
