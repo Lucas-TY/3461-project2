@@ -4,6 +4,12 @@ import sys
 import json
 import tkinter as tk
 
+
+# display helper message
+with open('help.txt') as f:
+    contents = f.read()
+    print(contents)
+
 # get user name from user.
 while True:
     username = input("username: ")
@@ -16,7 +22,7 @@ command = input("connect to server:")
 arguments = command.split()
 if arguments[0] == 'connect':
     if len(arguments)!=3:
-        print("Connect needs two arguments: address, port ")
+        print("Connect needs two arguments: address, port. ")
         sys.exit()
     # connect to server
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
