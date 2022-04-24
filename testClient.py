@@ -2,38 +2,38 @@ import socket
 import threading
 import sys
 import json
-import tkinter as tk
+# Choosing Nickname
+# nickname = input("Choose your nickname: ")
 
-# get user name from user.
-while True:
-    username = input()
-    if len(username)!=0:
-        break
-    print('Invalid username, try again')
-# get command from user.
+# # Connecting To Server
+# client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# client.connect(('127.0.0.1', 55555))
+username = input("Give a username: ")
 command = input("connect to server:")
-# change the string to list
+
 arguments = command.split()
 if arguments[0] == 'connect':
     if len(arguments)!=3:
         print("Connect needs two arguments: address, port ")
         sys.exit()
-    # connect to server
+    # connect to the client
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((arguments[1], int(arguments[2])))
-    # receive message from server.
     def receive():
         while True:
             try:
                 # Receive Message From Server
+                # If 'NICK' Send Nickname
                 message = client_socket.recv(1024).decode('ascii')
-                print(message)
+                if message == 'NICK':
+                    client_socket.send(username.encode('ascii'))
+                else:
+                    print(message)
             except:
                 # Close Connection When Error
                 print("An error occured!")
                 client_socket.close()
                 break
-    # Change the input string to json string
     def toJsonString(name, input):
         arguments = input.split(';')
         dictionary ={}
@@ -42,10 +42,10 @@ if arguments[0] == 'connect':
             dictionary[i+1] = arguments[i]
         json_object = json.dumps(dictionary)
         return json_object
-    # Sending commands To Server
+    # Sending Messages To Server
     def write():
         while True:
-            message = '{}'.format(toJsonString(username, input('')))
+            message = '{}: {}'.format(username, toJsonString(username, input('')))
             client_socket.send(message.encode('ascii'))
 
     # Starting Threads For Listening And Writing
@@ -54,4 +54,3 @@ if arguments[0] == 'connect':
 
     write_thread = threading.Thread(target=write)
     write_thread.start()
-    
