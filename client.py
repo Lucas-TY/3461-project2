@@ -20,7 +20,7 @@ while True:
 command = input("connect to server:")
 # change the string to list
 arguments = command.split()
-if arguments[0] == 'connect':
+if arguments[0] == '%'+'connect':
     if len(arguments)!=3:
         print("Connect needs two arguments: address, port. ")
         sys.exit()

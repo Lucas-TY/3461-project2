@@ -1,7 +1,7 @@
-    connect 127.0.0.1 55555 To connect to server.
-    groups     To retrieve a list of all groups that can be joined.
-    groupjoin;groupId      To join a specific group.
-    grouppost;groupId;subject;content   To Post a message to a specific discussion group.
-    groupusers;groupId         To retrieve a list of users in the given group.
-    groupleave;groupId         To leave a specific group.
-    groupmessage;groupId;messageId        To retrieve the content of the message posted earlier on a specific discusion group.
+    %connect 127.0.0.1 55555 To connect to server.
+    %groups     To retrieve a list of all groups that can be joined.
+    %groupjoin;groupId      To join a specific group.
+    %grouppost;groupId;subject;content   To Post a message to a specific discussion group.
+    %groupusers;groupId         To retrieve a list of users in the given group.
+    %groupleave;groupId         To leave a specific group.
+    %groupmessage;groupId;messageId        To retrieve the content of the message posted earlier on a specific discusion group.

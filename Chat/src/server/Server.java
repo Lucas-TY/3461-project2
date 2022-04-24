@@ -155,7 +155,17 @@ public class Server {
             Group result;
             System.out.println(this.userName + " executing: " + command);
             switch (command) {
-                case "groupjoin":
+                //send to a default group
+                case "%join":
+                     this.userName = receive.getString("0");
+                     result = server.getGroup("1");
+                     result.addUser(this.userName, this);
+                     System.out.println(this.userName + " joined in");
+                     messageBuffer = "New user connected: " + this.userName;
+                     result.broadcast(messageBuffer, this);
+                     // Todo: display recent history
+                    break;
+                case "%groupjoin":
                     String groupFind = receive.getString("2");
                     this.userName = receive.getString("0");
                     result = server.getGroup(groupFind);
@@ -165,40 +175,82 @@ public class Server {
                         System.out.println(this.userName + " joined in");
                         messageBuffer = "New user connected: " + this.userName;
                         result.broadcast(messageBuffer, this);
-
+                        // Todo: display recent history
                     }
 
                     break;
-                case "groups":
+                case "%groups":
                     this.sendMessage(server.groups.values().toString());
                     break;
-                case "grouppost":
-                    String subject = receive.getString("3");
-                    String content = receive.getString("4");
-                    Message newMes = new Message(subject, content);
+                case "%post":
+                        String subject = receive.getString("2");
+                        String content = receive.getString("3");
+                        Message newMes = new Message(subject, content);
+                        result = server.getGroup(receive.getString("2"));  
+                        if (result != null) {
+                            result.addMessage(newMes);
+                            this.messageBuffer = "Message ID: " + newMes.getId() + ", Sender: [" + this.userName
+                                    + "], Post Date: "
+                                    + LocalDate.now().toString() + ", Subject: " + newMes.getSubject();
+                            result.broadcast(messageBuffer, this);
+                             // Todo: display recent history
+                        }
+
+                    break;
+                 case "%grouppost":
+                    String sub = receive.getString("3");
+                    String cont = receive.getString("4");
+                    Message newMessage = new Message(sub, cont);
                     result = server.getGroup(receive.getString("2"));
                     if (result != null) {
-                        result.addMessage(newMes);
-                        this.messageBuffer = "Message ID: " + newMes.getId() + ", Sender: [" + this.userName
+                        result.addMessage(newMessage);
+                        this.messageBuffer = "Message ID: " + newMessage.getId() + ", Sender: [" + this.userName
                                 + "], Post Date: "
-                                + LocalDate.now().toString() + ", Subject: " + newMes.getSubject();
+                                + LocalDate.now().toString() + ", Subject: " + newMessage.getSubject();
                         result.broadcast(messageBuffer, this);
-
+                        
                     }
                     break;
-                case "groupusers":
+                case "%users":
+                    result = server.getGroup("1");
+                    if (result != null) {
+                        this.printUsers(result);
+                    }
+                    break;
+                case "%groupusers":
                     result = server.getGroup(receive.getString("2"));
                     if (result != null) {
                         this.printUsers(result);
                     }
                     break;
-                case "groupleave":
+                case "%leave":
+                    result = server.getGroup("1");
+                    if (result != null) {
+                        this.leaveChat(result);
+                    }
+                    break;                    
+                case "%groupleave":
                     result = server.getGroup(receive.getString("2"));
                     if (result != null) {
                         this.leaveChat(result);
                     }
                     break;
-                case "groupmessage":
+                case "%message":
+                    String mesId = receive.getString("2");
+                    result = server.getGroup("1");
+                    if (result != null) {
+
+                        Message mes = result.getMessage(mesId);
+                        if (mes != null) {
+                            this.messageBuffer = "Message ID: " + mes.getId() + ", Sender: [" + this.userName
+                                    + "], Content: " + mes.getContent();
+                            this.sendMessage(messageBuffer);
+                        } else {
+                            this.sendMessage("Wrong Message ID or Group ID");
+                        }
+                    }
+                    break;                    
+                case "%groupmessage":
                     String id = receive.getString("3");
                     result = server.getGroup(receive.getString("2"));
                     if (result != null) {
@@ -213,7 +265,7 @@ public class Server {
                         }
                     }
                     break;
-                case "exit":
+                case "%exit":
                     for (Group x : server.groups.values()) {
                         x.removeUser(this.userName, this);
                     }
@@ -256,6 +308,8 @@ public class Server {
             return JSON.parseObject(result);
 
         }
+
+
     }
 
 }
