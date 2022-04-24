@@ -2,28 +2,26 @@ import socket
 import threading
 import sys
 import json
-# Choosing Nickname
-# nickname = input("Choose your nickname: ")
 
-# # Connecting To Server
-# client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# client.connect(('127.0.0.1', 55555))
+# get user name from user.
 username = input("Give a username: ")
+# get command from user.
 command = input("connect to server:")
-
+# change the string to list
 arguments = command.split()
 if arguments[0] == 'connect':
     if len(arguments)!=3:
         print("Connect needs two arguments: address, port ")
         sys.exit()
-    # connect to the client
+    # connect to server
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((arguments[1], int(arguments[2])))
+    # receive message from server.
     def receive():
         while True:
             try:
                 # Receive Message From Server
-                # If 'NICK' Send Nickname
+                # If 'NICK' Send userName
                 message = client_socket.recv(1024).decode('ascii')
                 if message == 'NICK':
                     client_socket.send(username.encode('ascii'))
@@ -34,6 +32,7 @@ if arguments[0] == 'connect':
                 print("An error occured!")
                 client_socket.close()
                 break
+    # Change the input string to json string
     def toJsonString(name, input):
         arguments = input.split(';')
         dictionary ={}
