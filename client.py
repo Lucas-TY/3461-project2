@@ -60,4 +60,7 @@ if arguments[0] == 'connect':
 
     write_thread = threading.Thread(target=write)
     write_thread.start()
+else:
+    print('Need to connect server first!')
+    sys.exit()
     
