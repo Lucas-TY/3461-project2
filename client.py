@@ -21,7 +21,6 @@ if arguments[0] == 'connect':
         while True:
             try:
                 # Receive Message From Server
-                # If 'NICK' Send userName
                 message = client_socket.recv(1024).decode('ascii')
                 print(message)
             except:
