@@ -2,9 +2,14 @@ import socket
 import threading
 import sys
 import json
+import tkinter as tk
 
 # get user name from user.
-username = input("Give a username: ")
+while True:
+    username = input()
+    if len(username)!=0:
+        break
+    print('Invalid username, try again')
 # get command from user.
 command = input("connect to server:")
 # change the string to list
@@ -21,6 +26,7 @@ if arguments[0] == 'connect':
         while True:
             try:
                 # Receive Message From Server
+                # If 'NICK' Send userName
                 message = client_socket.recv(1024).decode('ascii')
                 print(message)
             except:
@@ -37,10 +43,10 @@ if arguments[0] == 'connect':
             dictionary[i+1] = arguments[i]
         json_object = json.dumps(dictionary)
         return json_object
-    # Sending Messages To Server
+    # Sending commands To Server
     def write():
         while True:
-            message = '{}: {}'.format(username, toJsonString(username, input('')))
+            message = '{}'.format(toJsonString(username, input('')))
             client_socket.send(message.encode('ascii'))
 
     # Starting Threads For Listening And Writing
@@ -49,3 +55,4 @@ if arguments[0] == 'connect':
 
     write_thread = threading.Thread(target=write)
     write_thread.start()
+    
