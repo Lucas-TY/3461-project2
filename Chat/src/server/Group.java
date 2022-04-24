@@ -1,11 +1,22 @@
+package server;
+import java.io.*;
+import java.net.*;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.stream.Stream;
+import java.time.LocalDate;
+import com.alibaba.fastjson.*;
+import com.alibaba.fastjson.JSONObject;
+
+import server.Server.User;
 public class Group {
-    private int id;
-    private String name;
+    public String id;
+    public String name;
     private Set<String> userNames = new HashSet<>();
     private Set<User> users = new HashSet<>();
     private Map<Integer, Message> messages = new HashMap<>();
     public static int messageID = 0;
-    public Group(int id,String name){
+    public Group(String id,String name){
         this.id=id;
         this.name=name;
     }
@@ -58,17 +69,27 @@ public class Group {
         this.messages.put(id, mes);
 
     }
+
+    /**
+    * Tostring for groups command
+    */
+    @Override
+    public String toString() {
+        return "(ID: "+ this.id+", Name: "+this.name+")";
+    }
+
     /**
     * Return the message that has that id
     */
     Message getMessage(String id) {
 
-            Integer num = Integer.parseInt(id);
-            Message result=this.messages.get(num);
-            if (id>Group.messageID){
-                result=new Message("error", "invalid id(too large)");
-            }
-        
-            return result;
+        Integer num = Integer.parseInt(id);
+        Message result = this.messages.get(num);
+        if (num > Group.messageID) {
+            result = new Message("error", "invalid id(too large)");
+        }
+
+        return result;
     }
+    
 }

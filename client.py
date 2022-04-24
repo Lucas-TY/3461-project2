@@ -6,7 +6,7 @@ import tkinter as tk
 
 # get user name from user.
 while True:
-    username = input()
+    username = input("username: ")
     if len(username)!=0:
         break
     print('Invalid username, try again')
