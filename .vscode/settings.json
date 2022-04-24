@@ -1,0 +1,13 @@
+{
+    "java.dependency.packagePresentation": "hierarchical",
+    "java.project.sourcePaths": [
+        "Project",
+        "Chat/src/com",
+        "Chat/src"
+    ],
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "c:\\Users\\xiaog\\Documents\\Code\\fastjson-1.2.79-javadoc.jar",
+        "fastjson-1.2.79-javadoc.jar"
+    ]
+}
