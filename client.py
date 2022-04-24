@@ -77,3 +77,4 @@ if arguments[0] == 'connect':
 else:
     print('Error: Need to connect to the server first!')
     sys.exit()
+
