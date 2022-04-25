@@ -9,10 +9,10 @@ Leon Cai & Lucas wu
 # How to compile and run our program:
 
 1. change direction to current folfer
-2. run the server by typing `java server/Server.java 55555`in complile_java folder (55555 is the port number)
-3. run the client by typing `py client.py` in a separate command window
-4. give command in the command window of the client.py
-5. use `connect 127.0.0.1 55555` to connect to server 
+2. run the server by typing `javac server/Server.java`in complile_java folder then typing "java server/Server.java 55555" (55555 is the port number)
+4. run the client by typing `py client.py` in a separate command window
+5. give command in the command window of the client.py
+6. use `connect 127.0.0.1 55555` to connect to server 
    - `55555` is the port number
    - `127.0.0.1` is the local ip address
 # GUI Client
