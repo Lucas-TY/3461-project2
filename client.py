@@ -64,10 +64,11 @@ class Client:
         json_data = json.loads(message)
         self.client_socket.send(message.encode('ascii'))
         self.input_area.delete('1.0', 'end')
-        if json_data['1']=="%exit":
+        if json_data['1']=="%"+"exit":
             self.running = False
             self.window.destroy()
             self.client_socket.close()
+            os._exit(0)
 
     def receive(self):
         while self.running:
@@ -85,14 +86,14 @@ class Client:
                 print("An error occured!")
                 self.client_socket.close()
                 break;
-        
+
     def stop(self):
         message = '{}'.format(self.toJsonString(self.username, '%exit'))
         self.client_socket.send(message.encode('ascii'))
         self.running = False
         self.window.destroy()
         self.client_socket.close()
-        exit(0)
+
 
     # change commands to jason string
     def toJsonString(self, name, input):
