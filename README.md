@@ -13,8 +13,8 @@ Leon Cai & Lucas wu
 3. run the client by typing `py client.py` in a separate command window
 4. give command in the command window of the client.py
 5. use `connect 127.0.0.1 55555` to connect to server 
-   - 55555 is the port number
-   - 127.0.0.1 is the local ip address
+   - `55555` is the port number
+   - `127.0.0.1` is the local ip address
    
    **for other commands, type: commandName; param1; param2 to run the command, each argument is separated by `;`**
 
