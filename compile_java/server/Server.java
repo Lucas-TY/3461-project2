@@ -21,6 +21,7 @@ public class Server {
     private Set<User> users = new HashSet<>();
     private Map<Integer, Message> messages = new HashMap<>();
     private Map<Integer, Group> groups = new HashMap<>();
+    private Group defaultGroup=new Group("Server","defaultGroup");
     public static int messageID = 0;
 
     public Server(int port) {
@@ -60,70 +61,6 @@ public class Server {
         server.execute();
     }
 
-    /**
-     * Delivers a message from one user to others (broadcasting)
-     */
-    void broadcast(String message, User excludeUser) {
-        for (User aUser : users) {
-            if (aUser != excludeUser) {
-                aUser.sendMessage(message);
-            }
-        }
-    }
-    /**
-     * When a client is disconneted, removes the associated username and UserThread
-     */
-    void removeUser(String userName, User aUser) {
-        boolean removed = userNames.remove(userName);
-        if (removed) {
-            users.remove(aUser);
-            System.out.println("The user " + userName + " quitted");
-        }
-    }
-    /**
-     * Return all current userNames
-     */
-    Set<String> getUserNames() {
-        return this.userNames;
-    }
-    /**
-     * Returns true if there are other users connected (not count the currently connected user)
-     */
-    boolean hasUsers() {
-        return !this.userNames.isEmpty();
-    }
-    /**
-    * Add a new message to the server record
-    */
-    void addMessage(Message mes) {
-        Server.messageID++;
-        Integer id = Integer.valueOf(Server.messageID);
-        mes.setId(id);
-        this.messages.put(id, mes);
-        System.out.println("sender:==="+mes.getSender());
-
-    }
-    /**
-    * Return the message that has that id
-    */
-    Message getMessage(String id) {
-
-        Integer num = Integer.parseInt(id);
-        Message result=this.messages.get(num);
-        if (num>Server.messageID){
-            result=new Message("System",LocalDate.now().toString(),"invalid id(too large)", "invalid id(too large)");
-        }
-    
-        return result;
-    }
-
-    /**
-     * Stores username of the newly connected client.
-     */
-    void addUserName(String userName) {
-        userNames.add(userName);
-    }
-
     void initGroups() {
         Group group1 = new Group("1", "final");
         Group group2 = new Group("2", "need sleep");
@@ -146,27 +83,12 @@ public class Server {
         System.out.println("not found");
         return null;
     }
-    static void help(User aUser){
-        try {
-            BufferedReader in = new BufferedReader(new FileReader("server/help.txt"));
-            String str;
-            while ((str = in.readLine()) != null) {
-                aUser.sendMessage(str);
-                System.out.println(str);
-            }
-            in.close();
-        } catch (IOException e) {
-            System.out.println("file error"+e);
-        }
-        
-    }
  
     public class User extends Thread {
         private Socket socket;
         private Server server;
         private PrintWriter writer;
         private InputStream reader;
-        public String userName;
         private String messageBuffer;
         private boolean quit = false;
         private boolean join = false;
@@ -180,17 +102,19 @@ public class Server {
             try {
                 JSONObject receive;
                 String command = "";
+                String userName="";
                 this.reader = socket.getInputStream();
 
                 OutputStream output = socket.getOutputStream();
                 this.writer = new PrintWriter(output, true);
                 do {
-                    if (this.join == false) {
-                        tryJoin();
+                    receive = this.readMessage(this);
+                    if (this.quit == false){
+                        command = receive.getString("1");
+                        userName = receive.getString("0");
+                        handleCommand(userName,command, receive);
                     }
-                    receive = this.readMessage();
-                    command = receive.getString("1");
-                    handleCommand(command, receive);
+                    
                     // server.broadcast(serverMessage, this);
 
                 } while (this.quit == false);
@@ -203,27 +127,6 @@ public class Server {
             }
         }
         /**
-        * Send history mssage to user
-        */
-        void printHistory(User aUser){
-            String messageBuffer;
-            Message mes; 
-            Integer currentId = messageID;
-            Integer lastId = messageID - 1;
-            if (messageID >= 2) {
-                mes=getMessage(lastId.toString());
-                messageBuffer = "Message ID: " + mes.getId() + ", Sender: [" + mes.getSender()  + "], Content: " + mes.getContent();
-                aUser.sendMessage(messageBuffer);
-                mes=getMessage(currentId.toString());
-                messageBuffer = "Message ID: " + mes.getId() + ", Sender: [" + mes.getSender()  + "], Content: " + mes.getContent();
-                aUser.sendMessage(messageBuffer);
-            }else if(messageID==1){
-                mes=getMessage(currentId.toString());
-                messageBuffer = "Message ID: " + mes.getId() + ", Sender: [" + mes.getSender()  + "], Content: " + mes.getContent();
-                aUser.sendMessage(messageBuffer);
-            }
-        }
-        /**
          * Sends a list of online users to the newly connected user(Group)
          */
         void printUsers(Group group) {
@@ -233,16 +136,7 @@ public class Server {
                 writer.println("No other users connected");
             }
         }
-        /**
-         * Sends a list of online users to the newly connected user(Server).
-         */
-        void printUsers() {
-            if (server.hasUsers()) {
-                writer.println("Connected users: " + server.getUserNames());
-            } else {
-                writer.println("No other users connected");
-            }
-        }
+        
         /**
          * Sends a message to the client.
          */
@@ -250,25 +144,39 @@ public class Server {
             writer.println(message);
         }
 
-        void handleCommand(String command, JSONObject receive) {
+        void handleCommand(String userName,String command, JSONObject receive) {
             Group result;
             String subject;
             String  content;
             Message newMes;
-            System.out.println(this.userName + " executing: " + command);
+            String groupFind;
+            System.out.println(userName + " executing: " + command);
             switch (command) {
                 case "%help":
-                    Server.help(this);
+                    this.help();
+                    break;
+                case "%join":
+                    groupFind = receive.getString("2");
+                    result = server.defaultGroup;
+                    
+                    
+                    result.addUser(userName, this);
+                    result.printHistory(this);
+                    printUsers(result);
+                    System.out.println(userName + " joined in");
+                    messageBuffer = "New user connected: " + userName;
+                    result.broadcast(messageBuffer, this);
                     break;
                 case "%groupjoin":
-                    String groupFind = receive.getString("2");
-                    this.userName = receive.getString("0");
+                    groupFind = receive.getString("2");
                     result = server.getGroup(groupFind);
                     if (result != null) {
+                        result.addUser(userName, this);
                         result.printHistory(this);
-                        result.addUser(this.userName, this);
-                        System.out.println(this.userName + " joined in");
-                        messageBuffer = "New user connected: " + this.userName;
+                        this.sendMessage("connected to [Group: "+result.id+"("+result.name+")]");
+                        printUsers(result);
+                        System.out.println(userName + " joined in");
+                        messageBuffer = "New user connected: " + userName;
                         result.broadcast(messageBuffer, this);
 
                     }
@@ -280,11 +188,11 @@ public class Server {
                 case "%grouppost":
                     subject = receive.getString("3");
                     content = receive.getString("4");
-                    newMes = new Message(this.userName,LocalDate.now().toString(),subject, content);
+                    newMes = new Message(userName,LocalDate.now().toString(),subject, content);
                     result = server.getGroup(receive.getString("2"));
                     if (result != null) {
                         result.addMessage(newMes);
-                        this.messageBuffer = "Message ID: " + newMes.getId() + ", Sender: [" + newMes.getSender()
+                        this.messageBuffer = "[Group: "+result.id+"("+result.name+")] Message ID: " + newMes.getId() + ", Sender: [" + newMes.getSender()
                                 + "], Post Date: "
                                 + newMes.getDate() + ", Subject: " + newMes.getSubject();
                         result.broadcast(messageBuffer, this);
@@ -294,20 +202,17 @@ public class Server {
                 case "%post":
                         subject = receive.getString("2");
                         content = receive.getString("3");
-                        newMes = new Message(this.userName,LocalDate.now().toString(),subject, content);
-                        server.addMessage(newMes);
+                        newMes = new Message(userName,LocalDate.now().toString(),subject, content);
+                        result = server.defaultGroup;
+                        result.addMessage(newMes);
                         this.messageBuffer = "Message ID: " + newMes.getId() + ", Sender: [" + newMes.getSender()
-                        + "], Post Date: "
-                        + newMes.getDate() + ", Subject: " + newMes.getSubject();
-                        server.broadcast(messageBuffer, this);
-                             // Todo: display recent history
-                        
-
+                                + "], Post Date: "
+                                + newMes.getDate() + ", Subject: " + newMes.getSubject();
+                        result.broadcast(messageBuffer, this);                        
                     break;
                 case "%users":
-                    
-                    this.printUsers();
-                    
+                    result=server.defaultGroup;
+                    this.printUsers(result);
                     break;
                 
                 case "%groupusers":
@@ -317,19 +222,23 @@ public class Server {
                     }
                     break;
                 case "%leave":
-                    leaveChat();
+                    result = server.defaultGroup;
+                
+                    this.leaveChat(result,userName);
+                
                     break;              
                 case "%groupleave":
                     result = server.getGroup(receive.getString("2"));
                     if (result != null) {
-                        this.leaveChat(result);
+                        this.leaveChat(result,userName);
                     }
                     break;
                 case "%message":
                     String mesId = receive.getString("2");
-                    Message mes = server.getMessage(mesId);
+                    result=server.defaultGroup;
+                    Message mes = result.getMessage(mesId);
                     if (mes != null) {
-                        this.messageBuffer = "Message ID: " + mes.getId() + ", Sender: [" + this.userName + "], Content: " + mes.getContent();
+                        this.messageBuffer = "Message ID: " + mes.getId() + ", Sender: [" + userName + "], Content: " + mes.getContent();
                         this.sendMessage(messageBuffer);
                     } else {
                         this.sendMessage("Wrong Message ID");
@@ -343,7 +252,7 @@ public class Server {
 
                         mes = result.getMessage(id);
                         if (mes != null) {
-                            this.messageBuffer = "Message ID: " + mes.getId() + ", Sender: [" + mes.getSender()
+                            this.messageBuffer = "[Group: "+result.id+"("+result.name+")] Message ID: " + mes.getId() + ", Sender: [" + mes.getSender()
                                 + "], Post Date: "
                                 + mes.getDate() + ", Subject: " + mes.getSubject();
                             this.sendMessage(messageBuffer);
@@ -353,9 +262,9 @@ public class Server {
                     }
                     break;
                 case "%exit":
-                    leaveChat();
+                    leaveChat(server.defaultGroup,userName);
                     for (Group x : server.groups.values()) {
-                        x.removeUser(this.userName, this);
+                        leaveChat(x,userName);
                     }
                     this.quit = true;
                     break;
@@ -365,70 +274,46 @@ public class Server {
             }
 
         }
-         /**
-         *  Leave the current Server chat
-         */
-        void leaveChat() {
-            server.removeUser(userName, this);
-            messageBuffer = userName + " has quitted.";
-            server.broadcast(messageBuffer, this);
-            this.join = false;
-        }
         /**
          * Leave the current Group chat
          */
-        void leaveChat(Group group) {
+        void leaveChat(Group group,String userName) {
             group.removeUser(userName, this);
-            messageBuffer = userName + " has quitted Group:"+group.id;
-            group.broadcast(messageBuffer, this);
+            
         }
         /**
          * Wait client to join chat
          */
-        void tryJoin() {
-            JSONObject receive; 
-            String command = "";
-            String name;
-            do{
-                writer.println("Please use %join to join the server");
-                receive = this.readMessage();
-                command = receive.getString("1");
-                System.out.println("command: "+command);
-                if (command.equals("%join")) {
-                    
-                    this.join = true;
+        void help(){
+            try {
+                BufferedReader in = new BufferedReader(new FileReader("server/help.txt"));
+                String str;
+                while ((str = in.readLine()) != null) {
+                    this.sendMessage(str);
+                    System.out.println(str);
                 }
-            } while (this.join == false);
+                in.close();
+            } catch (IOException e) {
+                System.out.println("file error"+e);
+            }
             
-
-            name = receive.getString("0");
-            this.userName = name;
-            users.add(this);
-            server.addUserName(name);
-            printUsers();
-            printHistory(this);
-            System.out.println(this.userName+" joined in");
-            messageBuffer = "New user connected: " + this.userName;
-            server.broadcast(messageBuffer, this);
         }
 
         /**
          * Reads a Json message from the client.
          */
-        JSONObject readMessage() {
+        JSONObject readMessage(User aUser) {
             String result = "";
             byte[] temp = new byte[1024];
             try {
 
                 reader.read(temp);
                 result = new String(temp, "ascii");
-
-                System.out.println("temp: " + temp);
                 System.out.println("result: " + result);
 
             } catch (IOException e) {
-                System.out.println("Error in UserThread: " + e.getMessage());
-                e.printStackTrace();
+                System.out.println("Client Interrupt" + e.getMessage());
+                aUser.quit=true;
             }
             return JSON.parseObject(result);
 

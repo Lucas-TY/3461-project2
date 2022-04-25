@@ -1,0 +1,21 @@
+1 server, 3 clients
+%connect 127.0.0.1 55555
+
+%join
+one of user:%post;Greeting;What's up guys!
+%leave
+
+user1:%groupjoin;1
+user2:%groupjoin;2
+user3:%groupjoin;2
+user1:post;Greeting;What's up guys!
+user2:post;Greeting;What's up guys!
+user2:%groupjoin;3
+user2:%grouppost;2;CSE3461;Computer networking
+user1:%leave
+user1:%exit
+user2:%groupleave;2
+user2:%groupleave;3
+user2:%exit
+user3：%leave
+user3:%exit
