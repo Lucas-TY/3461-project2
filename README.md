@@ -4,8 +4,8 @@
 1. change direction to current folfer
 2. run the server by typing java server/Server.java in complile_java folder
 3. run the client by typing py client.py in a separate command window
-4. give command in the command window of the client.py
-5. use connect 127.0.0.1 55555 to connect to server
+4. type user name in the pop up window
+5. use %connect 127.0.0.1 55555 to connect to server
  for other commands, type: commandName; param1; param2 to run the command, each argument is separated by ";"
     avaliable commands:
     %connect 127.0.0.1 55555
