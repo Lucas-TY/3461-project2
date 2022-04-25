@@ -17,26 +17,26 @@ Leon Cai & Lucas wu
    - 127.0.0.1 is the local ip address
    
    **for other commands, type: commandName; param1; param2 to run the command, each argument is separated by `;`**
-   - avaliable commands for part 1:
-   ```sh
-    %connect 127.0.0.1 55555
-    %join
-    %post;subject;content
-    %users
-    %leave
-    %message;messageId
-    %exit
-   ```
 
+- avaliable commands for part 1:
+  ```
+   %connect 127.0.0.1 55555
+   %join
+   %post;subject;content
+   %users
+   %leave
+   %message;messageId
+   %exit
+  ```
 - avaliable commands for part 2:
--     ```sh
--      %groups
--      %groupjoin;groupId
--      %grouppost;groupId;subject;content
--      %groupusers;groupId
--      %groupleave;groupId
--      %groupmessage;groupId;messageId
--     ```
+  ```
+   %groups
+   %groupjoin;groupId
+   %grouppost;groupId;subject;content
+   %groupusers;groupId
+   %groupleave;groupId
+   %groupmessage;groupId;messageId
+  ```
   
   <br/>
 
