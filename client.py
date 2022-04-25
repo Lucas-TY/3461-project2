@@ -38,7 +38,7 @@ class Client:
         self.window = tkinter.Tk()
         self.window.configure(bg='lightgray')
 
-        self.chat_label = tkinter.Label(self.window, text = 'Chat:', bg='lightgray')
+        self.chat_label = tkinter.Label(self.window, text = '<'+self.username+'> Chat', bg='lightgray')
         self.chat_label.config(font=('Arial', 12))
         self.chat_label.pack(padx=20, pady=5)
 
@@ -84,7 +84,7 @@ class Client:
                 # Close Connection When Error
                 print("An error occured!")
                 self.client_socket.close()
-        exit(0)
+                break;
         
     def stop(self):
         message = '{}'.format(self.toJsonString(self.username, '%exit'))
