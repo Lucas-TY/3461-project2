@@ -71,6 +71,9 @@ class Client:
                     self.text_area.insert('end', message)
                     self.text_area.yview('end')
                     self.text_area.config(state = 'disabled')
+                if message == 'Disconnect':
+                    self.stop
+                    break
             except:
                 # Close Connection When Error
                 print("An error occured!")
