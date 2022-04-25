@@ -266,6 +266,7 @@ public class Server {
                     for (Group x : server.groups.values()) {
                         leaveChat(x,userName);
                     }
+                    this.sendMessage("Disconnect");
                     this.quit = true;
                     break;
                 default:
