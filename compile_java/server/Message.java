@@ -13,23 +13,39 @@ public class Message {
         this.sender=name;
 
     }
+    /**
+     * Return subject string
+    */
     public String getSubject(){
         return this.subject;
     }
-
+    /**
+     * Return content string
+    */
     public String getContent(){
         return this.content;
     }
-
+    /**
+     * Set message ID
+    */
     public void setId(int id) {
         this.id = id;
     }
+    /**
+     * Return ID
+    */
     public int getId() {
         return this.id;
     }
+    /**
+     * Return date string
+    */
     public String getDate() {
         return this.date;
     }
+    /**
+     * Return senderName string
+    */
     public String getSender() {
         return this.sender;
     }

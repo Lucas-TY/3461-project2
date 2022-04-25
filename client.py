@@ -76,9 +76,7 @@ class Client:
                     self.text_area.insert('end', message)
                     self.text_area.yview('end')
                     self.text_area.config(state = 'disabled')
-                if message == "Disconnect":
-                    self.window.destroy()
-                    self.client_socket.close()
+
             except:
                 # Close Connection When Error
                 print("An error occured!")

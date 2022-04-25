@@ -27,7 +27,9 @@ public class Server {
     public Server(int port) {
         this.port = port;
     }
-
+    /**
+     * Waiting for new client to connect
+    */
     public void execute() {
         initGroups();
         try (ServerSocket serverSocket = new ServerSocket(port)) {
@@ -48,7 +50,9 @@ public class Server {
             ex.printStackTrace();
         }
     }
-
+    /**
+    * Main method
+    */
     public static void main(String[] args) {
         if (args.length < 1) {
             System.out.println("Syntax: java ChatServer <port-number>");
@@ -60,7 +64,9 @@ public class Server {
         Server server = new Server(port);
         server.execute();
     }
-
+    /**
+     * init all groups
+    */
     void initGroups() {
         Group group1 = new Group("1", "final");
         Group group2 = new Group("2", "need sleep");
@@ -73,7 +79,9 @@ public class Server {
         this.groups.put(4, group4);
         this.groups.put(5, group5);
     }
-
+    /**
+    * Get a group in server
+    */
     Group getGroup(String find) {
         for (Group x : this.groups.values()) {
             if (x.id.equals(find) || x.name.equals(find)) {
@@ -97,7 +105,9 @@ public class Server {
             this.socket = socket;
             this.server = server;
         }
-
+        /**
+        * User child thread
+        */
         public void run() {
             try {
                 JSONObject receive;
@@ -143,7 +153,9 @@ public class Server {
         void sendMessage(String message) {
             writer.println(message);
         }
-
+        /**
+         * Execute command
+         */
         void handleCommand(String userName,String command, JSONObject receive) {
             Group result;
             String subject;
@@ -283,7 +295,7 @@ public class Server {
             
         }
         /**
-         * Wait client to join chat
+         * User guide
          */
         void help(){
             try {
