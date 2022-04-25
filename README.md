@@ -18,7 +18,7 @@ Leon Cai & Lucas wu
 # GUI Client
 - `py testClient.py`
 # Command   
-    **for other commands, type: commandName; param1; param2 to run the command, each argument is separated by `;`**
+**for other commands, type: commandName; param1; param2 to run the command, each argument is separated by `;`**
 
 - avaliable commands for part 1:
   ```
