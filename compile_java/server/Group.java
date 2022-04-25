@@ -15,7 +15,7 @@ public class Group {
     private Set<String> userNames = new HashSet<>();
     private Set<User> users = new HashSet<>();
     private Map<Integer, Message> messages = new HashMap<>();
-    public static int messageID = 0;
+    public int messageID = 0;
     public Group(String id,String name){
         this.id=id;
         this.name=name;
@@ -45,6 +45,7 @@ public class Group {
         if (removed) {
             users.remove(aUser);
             System.out.println("The user " + userName + " quitted");
+            broadcast(userName + " has quitted Group:"+this.name, aUser);
         }
     }
     /**
@@ -63,8 +64,8 @@ public class Group {
     * Add a new message to the server record
     */
     void addMessage(Message mes) {
-        Group.messageID++;
-        Integer id = Integer.valueOf(Group.messageID);
+        this.messageID++;
+        Integer id = Integer.valueOf(this.messageID);
         mes.setId(id);
         this.messages.put(id, mes);
 
@@ -83,19 +84,19 @@ public class Group {
     void printHistory(User aUser){
         String messageBuffer;
         Message mes;
-        Integer currentId = messageID;
-        Integer lastId = messageID - 1;
-        if (messageID >= 2) {
+        Integer currentId = this.messageID;
+        Integer lastId = this.messageID - 1;
+        if (this.messageID >= 2) {
             mes=getMessage(lastId.toString());
-            messageBuffer = "Message ID: " + mes.getId() + ", Sender: [" + mes.getSender()  + "], Content: " + mes.getContent();
+            messageBuffer = "[Group:"+this.id+"("+this.name+")] Message ID: " + mes.getId() + ", Sender: [" + mes.getSender()  + "], Subject: "+mes.getSubject();
             aUser.sendMessage(messageBuffer);
             mes=getMessage(currentId.toString());
-            messageBuffer = "Message ID: " + mes.getId() + ", Sender: [" + mes.getSender()  + "], Content: " + mes.getContent();
+            messageBuffer = "[Group:"+this.id+"("+this.name+")] Message ID: " + mes.getId() + ", Sender: [" + mes.getSender()  + "], Subject: "+mes.getSubject();
             aUser.sendMessage(messageBuffer);
             
         }else if(messageID==1){
             mes=getMessage(currentId.toString());
-            messageBuffer = "Message ID: " + mes.getId() + ", Sender: [" + mes.getSender()  + "], Content: " + mes.getContent();
+            messageBuffer = "[Group:"+this.id+"("+this.name+")] Message ID: " + mes.getId() + ", Sender: [" + mes.getSender()  + "], Subject: "+mes.getSubject();
             aUser.sendMessage(messageBuffer);
         }
     }
@@ -106,7 +107,7 @@ public class Group {
 
         Integer num = Integer.parseInt(id);
         Message result = this.messages.get(num);
-        if (num > Group.messageID) {
+        if (num > this.messageID) {
             result=new Message("System",LocalDate.now().toString(),"invalid id(too large)", "invalid id(too large)");
         }
 
