@@ -5,8 +5,8 @@ Demo: **1 server, 3 clients**
 ## Connection
 
 Type `%connect 127.0.0.1 55555`
-    - 127.0.0.1 is ip_address
-    - 55555 is port
+   - 127.0.0.1 is ip_address
+   - 55555 is port
 
 ## part 1
 
