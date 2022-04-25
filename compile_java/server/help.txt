@@ -20,5 +20,7 @@
     To leave a specific group.
 %groupmessage;groupId;messageId        
     To retrieve the content of the message posted earlier on a specific discusion group.
+%leave
+    To leave current room
 %exit           
     To disconnect from server
