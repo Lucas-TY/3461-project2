@@ -2,6 +2,8 @@
     To connect to server.
 %join       
     To join a default group
+%leave
+    To leave current room
 %post;subject;content       
     To post a message to a discussion group.
 %users         
@@ -20,7 +22,5 @@
     To leave a specific group.
 %groupmessage;groupId;messageId        
     To retrieve the content of the message posted earlier on a specific discusion group.
-%leave
-    To leave current room
 %exit           
     To disconnect from server
