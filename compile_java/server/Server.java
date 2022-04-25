@@ -146,6 +146,20 @@ public class Server {
         System.out.println("not found");
         return null;
     }
+    static void help(User aUser){
+        try {
+            BufferedReader in = new BufferedReader(new FileReader("server/help.txt"));
+            String str;
+            while ((str = in.readLine()) != null) {
+                aUser.sendMessage(str);
+                System.out.println(str);
+            }
+            in.close();
+        } catch (IOException e) {
+            System.out.println("file error"+e);
+        }
+        
+    }
  
     public class User extends Thread {
         private Socket socket;
@@ -243,6 +257,9 @@ public class Server {
             Message newMes;
             System.out.println(this.userName + " executing: " + command);
             switch (command) {
+                case "%help":
+                    Server.help(this);
+                    break;
                 case "%groupjoin":
                     String groupFind = receive.getString("2");
                     this.userName = receive.getString("0");
