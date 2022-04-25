@@ -3,10 +3,14 @@ public class Message {
     private String subject;
     private String content;
     private int id;
+    private String date;
+    private String sender;
     
-    public  Message(String subject,String content){
+    public  Message(String name,String date,String subject,String content){
         this.subject=subject;
         this.content=content;
+        this.date=date;
+        this.sender=name;
 
     }
     public String getSubject(){
@@ -22,5 +26,11 @@ public class Message {
     }
     public int getId() {
         return this.id;
+    }
+    public String getDate() {
+        return this.date;
+    }
+    public String getSender() {
+        return this.sender;
     }
 }

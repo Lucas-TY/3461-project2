@@ -64,7 +64,7 @@ public class Group {
     */
     void addMessage(Message mes) {
         Group.messageID++;
-        Integer id = Integer.valueOf(Server.messageID);
+        Integer id = Integer.valueOf(Group.messageID);
         mes.setId(id);
         this.messages.put(id, mes);
 
@@ -75,9 +75,30 @@ public class Group {
     */
     @Override
     public String toString() {
-        return "(ID: "+ this.id+", Name: "+this.name+")";
+        return "\n\t(ID: "+ this.id+", Name: "+this.name+")";
     }
-
+    /**
+    * Send history mssage to user
+    */
+    void printHistory(User aUser){
+        String messageBuffer;
+        Message mes;
+        Integer currentId = messageID;
+        Integer lastId = messageID - 1;
+        if (messageID >= 2) {
+            mes=getMessage(lastId.toString());
+            messageBuffer = "Message ID: " + mes.getId() + ", Sender: [" + mes.getSender()  + "], Content: " + mes.getContent();
+            aUser.sendMessage(messageBuffer);
+            mes=getMessage(currentId.toString());
+            messageBuffer = "Message ID: " + mes.getId() + ", Sender: [" + mes.getSender()  + "], Content: " + mes.getContent();
+            aUser.sendMessage(messageBuffer);
+            
+        }else if(messageID==1){
+            mes=getMessage(currentId.toString());
+            messageBuffer = "Message ID: " + mes.getId() + ", Sender: [" + mes.getSender()  + "], Content: " + mes.getContent();
+            aUser.sendMessage(messageBuffer);
+        }
+    }
     /**
     * Return the message that has that id
     */
@@ -86,7 +107,7 @@ public class Group {
         Integer num = Integer.parseInt(id);
         Message result = this.messages.get(num);
         if (num > Group.messageID) {
-            result = new Message("error", "invalid id(too large)");
+            result=new Message("System",LocalDate.now().toString(),"invalid id(too large)", "invalid id(too large)");
         }
 
         return result;
