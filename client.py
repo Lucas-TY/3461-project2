@@ -71,9 +71,7 @@ class Client:
                     self.text_area.insert('end', message)
                     self.text_area.yview('end')
                     self.text_area.config(state = 'disabled')
-                if message == 'Disconnect':
-                    self.stop
-                    break
+
             except:
                 # Close Connection When Error
                 print("An error occured!")
@@ -81,6 +79,8 @@ class Client:
                 break
 
     def stop(self):
+        message = '{}'.format(self.toJsonString(self.username, 'close'))
+        self.client_socket.send(message.encode('ascii'))
         self.running = False
         self.window.destroy()
         self.client_socket.close()
