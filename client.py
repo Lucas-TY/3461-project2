@@ -1,3 +1,4 @@
+import os
 import socket
 import threading
 import sys
@@ -30,6 +31,10 @@ class Client:
 
         gui_thread.start()
         receive_thread.start()
+        if not receive_thread.is_alive:
+            print ("hi")
+        print("hihihi")
+            
     
     def gui_iteration(self):
         self.window = tkinter.Tk()
@@ -79,7 +84,7 @@ class Client:
                 break
 
     def stop(self):
-        message = '{}'.format(self.toJsonString(self.username, 'close'))
+        message = '{}'.format(self.toJsonString(self.username, '%exit'))
         self.client_socket.send(message.encode('ascii'))
         self.running = False
         self.window.destroy()
