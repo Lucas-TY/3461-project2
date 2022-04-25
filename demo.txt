@@ -8,8 +8,8 @@ one of user:%post;Greeting;What's up guys!
 user1:%groupjoin;1
 user2:%groupjoin;2
 user3:%groupjoin;2
-user1:post;Greeting;What's up guys!
-user2:post;Greeting;What's up guys!
+user1:%post;Greeting;What's up guys!
+user2:%post;Greeting;What's up guys!
 user2:%groupjoin;3
 user2:%grouppost;2;CSE3461;Computer networking
 user1:%leave

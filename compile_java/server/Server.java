@@ -220,7 +220,14 @@ public class Server {
                         this.messageBuffer = "Message ID: " + newMes.getId() + ", Sender: [" + newMes.getSender()
                                 + "], Post Date: "
                                 + newMes.getDate() + ", Subject: " + newMes.getSubject();
-                        result.broadcast(messageBuffer, this);                        
+                        result.broadcast(messageBuffer, this); 
+                        for (Group x : server.groups.values()){
+                            if (x.hasUser(userName)){
+                                x.addMessage(newMes);
+                                this.messageBuffer = "[Group: "+x.id+"("+x.name+")] Message ID: " + newMes.getId() + ", Sender: [" + newMes.getSender() + "], Post Date: " + newMes.getDate() + ", Subject: " + newMes.getSubject();
+                                x.broadcast(messageBuffer, this);
+                            }
+                        }                       
                     break;
                 case "%users":
                     result=server.defaultGroup;

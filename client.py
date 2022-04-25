@@ -5,6 +5,7 @@ import sys
 import json
 import tkinter
 import tkinter.scrolledtext
+import json
 from tkinter import simpledialog
 
 
@@ -31,10 +32,7 @@ class Client:
 
         gui_thread.start()
         receive_thread.start()
-        if not receive_thread.is_alive:
-            print ("hi")
-        print("hihihi")
-            
+        
     
     def gui_iteration(self):
         self.window = tkinter.Tk()
@@ -63,11 +61,16 @@ class Client:
 
     def write(self):
         message = '{}'.format(self.toJsonString(self.username, self.input_area.get('1.0','end-1c')))
+        json_data = json.loads(message)
         self.client_socket.send(message.encode('ascii'))
         self.input_area.delete('1.0', 'end')
+        if json_data['1']=="%exit":
+            self.running = False
+            self.window.destroy()
+            self.client_socket.close()
 
     def receive(self):
-       while self.running:
+        while self.running:
             try:
                 message = self.client_socket.recv(1024).decode('ascii')
                 # Receive Message From Server
@@ -81,8 +84,8 @@ class Client:
                 # Close Connection When Error
                 print("An error occured!")
                 self.client_socket.close()
-                break
-
+        exit(0)
+        
     def stop(self):
         message = '{}'.format(self.toJsonString(self.username, '%exit'))
         self.client_socket.send(message.encode('ascii'))

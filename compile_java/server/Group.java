@@ -61,6 +61,12 @@ public class Group {
         return !this.userNames.isEmpty();
     }
     /**
+     * Returns true if user is in this group
+     */
+    boolean hasUser(String userNames) {
+        return this.userNames.contains(userNames);
+    }
+    /**
     * Add a new message to the server record
     */
     void addMessage(Message mes) {
