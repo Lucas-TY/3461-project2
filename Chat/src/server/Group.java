@@ -44,7 +44,7 @@ public class Group {
         boolean removed = userNames.remove(userName);
         if (removed) {
             users.remove(aUser);
-            System.out.println("The user " + userName + " quitted");
+            System.out.println("\rThe user " + userName + " quitted");
         }
     }
     /**

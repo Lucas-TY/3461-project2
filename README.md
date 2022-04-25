@@ -15,8 +15,10 @@ Leon Cai & Lucas wu
 5. use `connect 127.0.0.1 55555` to connect to server 
    - `55555` is the port number
    - `127.0.0.1` is the local ip address
-   
-   **for other commands, type: commandName; param1; param2 to run the command, each argument is separated by `;`**
+# GUI Client
+- `py testClient.py`
+# Command   
+    **for other commands, type: commandName; param1; param2 to run the command, each argument is separated by `;`**
 
 - avaliable commands for part 1:
   ```
